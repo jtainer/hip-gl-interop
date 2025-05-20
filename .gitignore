@@ -1,0 +1,5 @@
+lib/*.a
+include/*.h
+build
+.vscode
+
