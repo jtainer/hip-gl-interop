@@ -25,6 +25,7 @@ hipStream_t CreateHIPStream() {
 	hipError_t err = hipGLGetDevices(&gl_device_count, &hip_device, 1, hipGLDeviceList::hipGLDeviceListAll);
 	if (err != hipSuccess) {
 		std::cerr << "Failed to enumerate HIP devices" << std::endl;
+		std::exit(1);
 	}
 	else if (gl_device_count == 0) {
 		std::cerr << "No GL devices found" << std::endl;
@@ -64,16 +65,19 @@ HIPSurfaceWrapper LoadHIPSurfaceFromTexture(Texture texture) {
 	hipError_t err = hipGraphicsGLRegisterImage(&surface.resource, texture.id, GL_TEXTURE_2D, hipGraphicsRegisterFlagsNone);
 	if (err != hipSuccess) {
 		std::cerr << "Failed to register OpenGL texture" << std::endl;
+		std::exit(1);
 	}
 
 	err = hipGraphicsMapResources(1, &surface.resource, 0);
 	if (err != hipSuccess) {
 		std::cerr << "Failed to map OpenGL texture resource" << std::endl;
+		std::exit(1);
 	}
 
 	err = hipGraphicsSubResourceGetMappedArray(&surface.array, surface.resource, 0, 0);
 	if (err != hipSuccess) {
 		std::cerr << "Failed to get pointer to mapped resource" << std::endl;
+		std::exit(1);
 	}
 
 	surface.desc.resType = hipResourceTypeArray;
@@ -81,6 +85,7 @@ HIPSurfaceWrapper LoadHIPSurfaceFromTexture(Texture texture) {
 	err = hipCreateSurfaceObject(&surface.surfRef, &surface.desc);
 	if (err != hipSuccess) {
 		std::cerr << "Failed to create HIP surface object" << std::endl;
+		std::exit(1);
 	}
 
 	return surface;
